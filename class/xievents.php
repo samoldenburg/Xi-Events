@@ -2,6 +2,9 @@
     class XiEvents {
 
         public static $post_type_name = 'xievents';
+        public static $calendar_taxonomy_name = 'xicalendars';
+        public static $category_taxonomy_name = 'xicategories';
+        public static $tag_taxonomy_name = 'xitags';
 
 
         // Init hooks
@@ -9,6 +12,7 @@
             global $xi_error;
 
             add_action('init', array('XiEvents', 'register_event_post_type'));
+            add_action('init', array('XiEvents', 'register_taxonomies'));
             add_action('admin_menu', array('XiEvents', 'add_settings_pages'));
             add_action('admin_menu', array('XiEvents', 'add_help_pages'));
             add_action('admin_print_styles', array('XiEvents', 'admin_styles'));
@@ -16,6 +20,20 @@
             add_action('admin_notices', array($xi_error, 'init_display_errors'), 99);
 
             XiMetaboxes::init_meta_boxes();
+        }
+
+        public static function plugin_activation_hook() {
+            if (!current_user_can('activate_plugins'))
+                return;
+            global $wp_rewrite;
+            $wp_rewrite->flush_rules();
+        }
+
+        public static function plugin_deactivation_hook() {
+            if (!current_user_can('activate_plugins'))
+                return;
+            global $wp_rewrite;
+            $wp_rewrite->flush_rules();
         }
 
         public static function register_event_post_type() {
@@ -54,6 +72,80 @@
             register_post_type( self::$post_type_name, $args );
         }
 
+        public static function register_taxonomies() {
+            $labels = array(
+        	    'name'              => _x( 'Calendars', 'taxonomy general name' ),
+        		'singular_name'     => _x( 'Calendar', 'taxonomy singular name' ),
+        		'search_items'      => __( 'Search Calendars' ),
+        		'all_items'         => __( 'All Calendars' ),
+        		'parent_item'       => __( 'Parent Calendar' ),
+        		'parent_item_colon' => __( 'Parent Calendar:' ),
+        		'edit_item'         => __( 'Edit Calendar' ),
+        		'update_item'       => __( 'Update Calendar' ),
+        		'add_new_item'      => __( 'Add New Calendar' ),
+        		'new_item_name'     => __( 'New Calendar Name' ),
+        		'menu_name'         => __( 'Calendars' ),
+        	);
+
+        	$args = array(
+        		'hierarchical'      => true,
+        		'labels'            => $labels,
+        		'show_ui'           => true,
+        		'show_admin_column' => true,
+        		'query_var'         => true,
+        		'rewrite'           => array( 'slug' => 'calendar' ),
+        	);
+        	register_taxonomy( self::$calendar_taxonomy_name, array( self::$post_type_name ), $args );
+
+            $labels = array(
+        	    'name'              => _x( 'Event Categories', 'taxonomy general name' ),
+        		'singular_name'     => _x( 'Event Category', 'taxonomy singular name' ),
+        		'search_items'      => __( 'Search Event Categories' ),
+        		'all_items'         => __( 'All Event Categories' ),
+        		'parent_item'       => __( 'Parent Event Category' ),
+        		'parent_item_colon' => __( 'Parent Event Category:' ),
+        		'edit_item'         => __( 'Edit Event Category' ),
+        		'update_item'       => __( 'Update Event Category' ),
+        		'add_new_item'      => __( 'Add New Event Category' ),
+        		'new_item_name'     => __( 'New Event Category Name' ),
+        		'menu_name'         => __( 'Event Categories' ),
+        	);
+
+        	$args = array(
+        		'hierarchical'      => true,
+        		'labels'            => $labels,
+        		'show_ui'           => true,
+        		'show_admin_column' => true,
+        		'query_var'         => true,
+        		'rewrite'           => array( 'slug' => 'event-category' ),
+        	);
+        	register_taxonomy( self::$category_taxonomy_name, array( self::$post_type_name ), $args );
+
+            $labels = array(
+        	    'name'              => _x( 'Event Tags', 'taxonomy general name' ),
+        		'singular_name'     => _x( 'Event Tag', 'taxonomy singular name' ),
+        		'search_items'      => __( 'Search Event Tags' ),
+        		'all_items'         => __( 'All Event Tags' ),
+        		'parent_item'       => __( 'Parent Event Tag' ),
+        		'parent_item_colon' => __( 'Parent Event Tag:' ),
+        		'edit_item'         => __( 'Edit Event Tag' ),
+        		'update_item'       => __( 'Update Event Tag' ),
+        		'add_new_item'      => __( 'Add New Event Tag' ),
+        		'new_item_name'     => __( 'New Event Tag Name' ),
+        		'menu_name'         => __( 'Event Tags' ),
+        	);
+
+        	$args = array(
+        		'hierarchical'      => false,
+        		'labels'            => $labels,
+        		'show_ui'           => true,
+        		'show_admin_column' => true,
+        		'query_var'         => true,
+        		'rewrite'           => array( 'slug' => 'event-tag' ),
+        	);
+        	register_taxonomy( self::$tag_taxonomy_name, array( self::$post_type_name ), $args );
+        }
+
 
         public static function add_settings_pages() {
             add_submenu_page('edit.php?post_type=' . self::$post_type_name, 'Xi Settings', 'Settings', 'manage_options', 'xisettings', array('XiSettings', 'main'));
@@ -71,6 +163,6 @@
         public static function admin_scripts() {
             wp_enqueue_script('jquery-ui-datepicker');
             wp_enqueue_script('xi_admin_js', XI__PLUGIN_URL . 'assets/js/admin.js');
-        }        
+        }
     }
 ?>

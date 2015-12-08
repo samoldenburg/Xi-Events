@@ -16,3 +16,5 @@ foreach (glob(XI__PLUGIN_DIR . '/class/*.php') as $class)
 
 $xi_error = new XiError();
 XiEvents::init();
+
+register_activation_hook(__FILE__, array('XiEvents', 'plugin_activation_hook'));
