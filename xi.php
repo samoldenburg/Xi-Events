@@ -14,4 +14,5 @@ define('XI__PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 foreach (glob(XI__PLUGIN_DIR . '/class/*.php') as $class)
     include $class;
 
+$xi_error = new XiError();
 XiEvents::init();

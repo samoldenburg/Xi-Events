@@ -29,15 +29,91 @@
                 return;
 
             // example of how we'll throw errors
-            #XiError::throw_error();
 
-            $event_all_day = $_POST['event_all_day'];
-            update_post_meta($post_id, 'xi_event_all_day', $event_all_day);
+            // Set up an associative array to save later (if validations check out)
+            $full_start_time = $_POST['event_start_date'] . ' '
+                . $_POST['event_start_time']['hours'] . ':'
+                . $_POST['event_start_time']['minutes'] . ' '
+                . $_POST['event_start_time']['ampm'];
 
-            $event_start_date = $_POST['event_start_date'];
-            update_post_meta($post_id, 'xi_event_start_date', $event_start_date);
+            $full_end_time = $_POST['event_end_date'] . ' '
+                . $_POST['event_end_time']['hours'] . ':'
+                . $_POST['event_end_time']['minutes'] . ' '
+                . $_POST['event_end_time']['ampm'];
 
-            $event_start_time = json_encode($_POST['event_start_time']);
-            update_post_meta($post_id, 'xi_event_start', $event_start_time);
+            $full_address = $_POST['event_venue_address_1'] . ' '
+                . $_POST['event_venue_address_2'] . ','
+                . $_POST['event_venue_city'] . ' '
+                . $_POST['event_venue_state'] . ','
+                . $_POST['event_venue_postal_code'];
+
+            $save_meta = array(
+                'xi_event_all_day'              => intval($_POST['event_all_day']),
+
+                'xi_event_start_date'           => XiUtilities::format_date_time(strtotime($_POST['event_start_date'])),
+                'xi_event_start_date_raw'       => $_POST['event_start_date'],
+                'xi_event_start_time'           => XiUtilities::json_encode($_POST['event_start_time']),
+                'xi_event_start_formatted'      => XiUtilities::format_date_time(strtotime($full_start_time)),
+                'xi_event_start_raw'            => $full_start_time,
+                'xi_event_start_formatted_gmt'  => XiUtilities::format_date_time_gmt(strtotime($full_start_time)),
+
+                'xi_event_start_time_hours'     => $_POST['event_start_time']['hours'],
+                'xi_event_start_time_minutes'   => $_POST['event_start_time']['minutes'],
+                'xi_event_start_time_ampm'      => $_POST['event_start_time']['ampm'],
+
+                'xi_event_end_date'             => XiUtilities::format_date_time(strtotime($_POST['event_end_date'])),
+                'xi_event_end_date_raw'         => $_POST['event_end_date'],
+                'xi_event_end_time'             => XiUtilities::json_encode($_POST['event_end_time']),
+                'xi_event_end_formatted'        => XiUtilities::format_date_time(strtotime($full_end_time)),
+                'xi_event_end_raw'              => $full_end_time,
+                'xi_event_end_formatted_gmt'    => XiUtilities::format_date_time_gmt(strtotime($full_end_time)),
+
+                'xi_event_end_time_hours'       => $_POST['event_end_time']['hours'],
+                'xi_event_end_time_minutes'     => $_POST['event_end_time']['minutes'],
+                'xi_event_end_time_ampm'        => $_POST['event_end_time']['ampm'],
+
+                'xi_event_recurrence'           => $_POST['event_recurrence'],
+
+                'xi_event_venue_name'           => $_POST['event_venue_name'],
+                'xi_event_venue_address_1'      => $_POST['event_venue_address_1'],
+                'xi_event_venue_address_2'      => $_POST['event_venue_address_2'],
+                'xi_event_venue_city'           => $_POST['event_venue_city'],
+                'xi_event_venue_state'          => $_POST['event_venue_state'],
+                'xi_event_venue_country'        => $_POST['event_venue_country'],
+                'xi_event_venue_postal_code'    => $_POST['event_venue_postal_code'],
+                'xi_event_venue_phone'          => $_POST['event_venue_phone'],
+                'xi_event_venue_website'        => $_POST['event_venue_website'],
+                'xi_event_venue_google_map'     => $_POST['event_venue_google_map'],
+            );
+
+            // Only put in geocoded information if the event has an address
+            if (!empty($_POST['event_venue_address_1'])) {
+                $geocoded_information = XiUtilities::geocode_address($full_address);
+                $geocoded_save_meta = array(
+                    'xi_event_venue_formatted_address' => $geocoded_information->formatted_address,
+                    'xi_evenut_venue_lat'              => $geocoded_information->geometry->location->lat,
+                    'xi_evenut_venue_lng'              => $geocoded_information->geometry->location->lng,
+                    'xi_event_venue_full_geocode'      => XiUtilities::json_encode($geocoded_information)
+                );
+                $save_meta = array_merge($save_meta, $geocoded_save_meta);
+            }
+
+            $valid = XiMetaboxes::validate_event($save_meta);
+
+            // Save the contents of the array
+            if ($valid === true) {
+                foreach ($save_meta as $meta_key => $meta_value) {
+                    update_post_meta($post_id, $meta_key, $meta_value);
+                }
+            } else {
+                global $xi_error;
+                $xi_error->throw_error($valid);
+            }
+        }
+
+        public static function validate_event($save_meta) {
+            if (empty($save_meta['xi_event_start_date_raw']))
+                return 1;
+            return true;
         }
     }
