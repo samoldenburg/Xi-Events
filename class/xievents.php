@@ -19,7 +19,10 @@
             add_action('admin_enqueue_scripts', array('XiEvents', 'admin_scripts'));
             add_action('admin_notices', array($xi_error, 'init_display_errors'), 99);
 
+            add_filter('the_content', array('XiEvents', 'load_single_template'));
+
             XiMetaboxes::init_meta_boxes();
+            XiShortcode::init();
         }
 
         public static function plugin_activation_hook() {
@@ -163,6 +166,30 @@
         public static function admin_scripts() {
             wp_enqueue_script('jquery-ui-datepicker');
             wp_enqueue_script('xi_admin_js', XI__PLUGIN_URL . 'assets/js/admin.js');
+        }
+
+        /**
+         * @filter - xi_single_event_template
+         *     Override how the event meta is displayed.
+         *     By default will invoke the [xi_event_details] shortcode
+         * @filter - xi_single_event_prepend
+         *     Control whether the event meta is prepended or appended to the post content for the single view.
+         *     Default is prepend.
+         */
+        public static function load_single_template($content) {
+            global $post;
+            if (is_singular(self::$post_type_name)) {
+                $single_event_content = apply_filters('xi_single_event_template', '[xi_event_details]');
+                $single_event_prepend = apply_filters('xi_single_event_prepend', true);
+
+                if ($single_event_prepend) {
+                    return $single_event_content . $content;
+                } else {
+                    return $content . $single_event_content;
+                }
+            } else {
+                return $content;
+            }
         }
     }
 ?>

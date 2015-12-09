@@ -15,21 +15,23 @@
         </td>
         <td>
             <input type="text" class="xi_datepicker" name="event_start_date" id="event_start_date_time"<?=XiUtilities::set_value('xi_event_start_date_raw');?>>
-            @
-            <select name="event_start_time[hours]" id="event_start_time_hours">
-                <?php for ($i = 1; $i <= 12; $i++) : $v = sprintf('%02d', $i); ?>
-                    <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_start_time_hours', $v);?>><?=$v;?></option>
-                <?php endfor; ?>
-            </select>
-            <select name="event_start_time[minutes]" id="event_start_time_minutes">
-                <?php for ($i = 0; $i < 60; $i++) : $v = sprintf('%02d', $i); ?>
-                    <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_start_time_minutes', $v);?>>:<?=$v;?></option>
-                <?php endfor; ?>
-            </select>
-            <select name="event_start_time[ampm]" id="event_start_time_ampm">
-                <option value="am"<?=XiUtilities::set_select('xi_event_start_time_ampm', 'am');?>>am</option>
-                <option value="pm"<?=XiUtilities::set_select('xi_event_start_time_ampm', 'pm');?>>pm</option>
-            </select>
+            <span id="event-start-time-wrapper">
+                @
+                <select name="event_start_time[hours]" id="event_start_time_hours">
+                    <?php for ($i = 1; $i <= 12; $i++) : $v = sprintf('%02d', $i); ?>
+                        <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_start_time_hours', $v);?>><?=$v;?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="event_start_time[minutes]" id="event_start_time_minutes">
+                    <?php for ($i = 0; $i < 60; $i++) : $v = sprintf('%02d', $i); ?>
+                        <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_start_time_minutes', $v);?>>:<?=$v;?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="event_start_time[ampm]" id="event_start_time_ampm">
+                    <option value="am"<?=XiUtilities::set_select('xi_event_start_time_ampm', 'am');?>>am</option>
+                    <option value="pm"<?=XiUtilities::set_select('xi_event_start_time_ampm', 'pm');?>>pm</option>
+                </select>
+            </span>
         </td>
     </tr>
     <tr>
@@ -38,21 +40,23 @@
         </td>
         <td>
             <input type="text" class="xi_datepicker" name="event_end_date" id="event_end_date_time"<?=XiUtilities::set_value('xi_event_end_date_raw');?>>
-            @
-            <select name="event_end_time[hours]" id="event_end_time_hours">
-                <?php for ($i = 1; $i <= 12; $i++) : $v = sprintf('%02d', $i); ?>
-                    <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_end_time_hours', $v);?>><?=$v;?></option>
-                <?php endfor; ?>
-            </select>
-            <select name="event_end_time[minutes]" id="event_end_time_minutes">
-                <?php for ($i = 0; $i < 60; $i++) : $v = sprintf('%02d', $i); ?>
-                    <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_end_time_minutes', $v);?>>:<?=$v;?></option>
-                <?php endfor; ?>
-            </select>
-            <select name="event_end_time[ampm]" id="event_end_time_ampm">
-                <option value="am"<?=XiUtilities::set_select('xi_event_end_time_ampm', 'am');?>>am</option>
-                <option value="pm"<?=XiUtilities::set_select('xi_event_end_time_ampm', 'pm');?>>pm</option>
-            </select>
+            <span id="event-end-time-wrapper">
+                @
+                <select name="event_end_time[hours]" id="event_end_time_hours">
+                    <?php for ($i = 1; $i <= 12; $i++) : $v = sprintf('%02d', $i); ?>
+                        <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_end_time_hours', $v);?>><?=$v;?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="event_end_time[minutes]" id="event_end_time_minutes">
+                    <?php for ($i = 0; $i < 60; $i++) : $v = sprintf('%02d', $i); ?>
+                        <option value="<?=$v;?>"<?=XiUtilities::set_select('xi_event_end_time_minutes', $v);?>>:<?=$v;?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="event_end_time[ampm]" id="event_end_time_ampm">
+                    <option value="am"<?=XiUtilities::set_select('xi_event_end_time_ampm', 'am');?>>am</option>
+                    <option value="pm"<?=XiUtilities::set_select('xi_event_end_time_ampm', 'pm');?>>pm</option>
+                </select>
+            </span>
         </td>
     </tr>
     <tr>
