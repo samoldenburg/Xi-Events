@@ -13,3 +13,5 @@ While the majority of classes in this plugin are object oriented, they are mostl
 * Shortcodes to display views
 * Widgets for upcoming events and small calendars
 * Fully customizable templates and an option to completely disable front end styles
+* Minimally invasive taxonomies to support custom taxonomy additions
+* Multiple Calendar support
