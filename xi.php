@@ -3,7 +3,7 @@
     Plugin Name: Xi Events
     Plugin URI:
     Description: An events and calendar plugin.
-    Version: 0.0.1
+    Version: 0.0.2
     Author: Sam Oldenburg
     Author URI: http://samoldenburg.me
 */
