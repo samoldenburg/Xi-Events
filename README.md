@@ -12,6 +12,6 @@ While the majority of classes in this plugin are object oriented, they are mostl
 * Map View
 * Shortcodes to display views
 * Widgets for upcoming events and small calendars
-* Fully customizable templates and an option to completely disable front end styles
+* Fully customizable templates and an option to completely disable front end styles. Every single template, regardless of if its for a shortcode, widget, or general template output is 100% customizable, and override-able in themes or child plugins.
 * Minimally invasive taxonomies to support custom taxonomy additions
 * Multiple Calendar support
