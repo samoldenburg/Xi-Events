@@ -11,7 +11,7 @@
 .xi_admin_color_box {
     width: 20px;
     height: 20px;
-    box-shadow: 1px 1px 1px #ccc;
+    box-shadow: 0px 1px 0px #ccc;
     border: 1px solid #ccc;
     display: inline-block;
     border-radius: 2px;
