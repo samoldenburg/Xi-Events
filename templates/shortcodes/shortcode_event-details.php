@@ -12,6 +12,15 @@
     <h2>Event Details</h2>
     <p>
         <strong>Time:</strong> <?=XiEventmeta::render_event_time($xi_event_id, $xi_event_meta);?>
+        <?php
+            $categories = wp_get_post_terms($xi_event_id, XiEvents::$category_taxonomy_name);
+            if (!empty($categories)) : ?>
+                <br /><strong><?=_n('Category', 'Categories', count($categories));?>:</strong>
+                <?php foreach ($categories as $category) : ?>
+                    <a href="<?=get_term_link($category);?>"><?=$category->name;?></a>
+                <?php endforeach; ?>
+            <?php endif;
+        ?>
     </p>
     <h2>Venue Details</h2>
     <p>
