@@ -4,6 +4,14 @@ Currently in development and non-functional, Xi Events intends to be a simple to
 
 While the majority of classes in this plugin are object oriented, they are mostly static and used for namespace and organizational purposes.
 
+# Required Version
+Xi Events requires Wordpress 4.4 or higher. We make use of the brand new term_meta here.
+
+# Completed Features
+* Basic Events Framework and Custom Fields
+* Categories with Color Pickers
+* [xi_event_details] Basic Shortcode Implementation (Will expand further in the future)
+
 # Planned Features
 * Event Recurrence
 * Google Maps and automatic Geocoding Functionality
