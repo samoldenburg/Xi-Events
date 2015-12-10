@@ -1,6 +1,9 @@
 <?php
     class XiShortcode {
 
+        /**
+         * All calls to add_shortcode should be here.
+         */
         public static function init() {
             add_shortcode('xi_event_details', array('XiShortcode', 'event_details'));
         }

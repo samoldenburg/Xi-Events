@@ -1,5 +1,6 @@
 jQuery(document).ready(function($) {
     $(".xi_datepicker").datepicker();
+    $(".xi_colorpicker").wpColorPicker();
 
     $("#event_start_date_time").change(function() {
         var date = $(this).datepicker("getDate");

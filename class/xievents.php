@@ -4,6 +4,7 @@
         public static $post_type_name = 'xievents';
         public static $calendar_taxonomy_name = 'xicalendars';
         public static $category_taxonomy_name = 'xicategories';
+        public static $category_taxonomy_slug = 'event-category';
         public static $tag_taxonomy_name = 'xitags';
 
 
@@ -22,6 +23,7 @@
             add_filter('the_content', array('XiEvents', 'load_single_template'));
 
             XiMetaboxes::init_meta_boxes();
+            XiCategorymeta::init();
             XiShortcode::init();
         }
 
@@ -70,6 +72,7 @@
                 'has_archive'        => true,
                 'hierarchical'       => false,
                 'menu_position'      => null,
+                'menu_icon'          => 'dashicons-calendar',
                 'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
             );
             register_post_type( self::$post_type_name, $args );
@@ -119,8 +122,7 @@
         		'labels'            => $labels,
         		'show_ui'           => true,
         		'show_admin_column' => true,
-        		'query_var'         => true,
-        		'rewrite'           => array( 'slug' => 'event-category' ),
+        		'rewrite'           => array( 'slug' => self::$category_taxonomy_slug ),
         	);
         	register_taxonomy( self::$category_taxonomy_name, array( self::$post_type_name ), $args );
 
@@ -143,7 +145,6 @@
         		'labels'            => $labels,
         		'show_ui'           => true,
         		'show_admin_column' => true,
-        		'query_var'         => true,
         		'rewrite'           => array( 'slug' => 'event-tag' ),
         	);
         	register_taxonomy( self::$tag_taxonomy_name, array( self::$post_type_name ), $args );
@@ -160,11 +161,13 @@
 
         public static function admin_styles() {
             wp_enqueue_style('jquery-ui-datepicker-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css');
+            wp_enqueue_style('wp-color-picker');
             wp_enqueue_style('xi_admin_css', XI__PLUGIN_URL . 'assets/css/admin.css');
         }
 
         public static function admin_scripts() {
             wp_enqueue_script('jquery-ui-datepicker');
+            wp_enqueue_script('wp-color-picker');
             wp_enqueue_script('xi_admin_js', XI__PLUGIN_URL . 'assets/js/admin.js');
         }
 

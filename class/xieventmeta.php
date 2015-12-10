@@ -16,10 +16,13 @@
          * Considerations are taken here to deal with all day events, single day events, multiple day events, etc.
          * Its handy to have this in one function, but the templates do nothing to prevent developers from ignoring it.
          * Takes the event meta as a parameter to avoid unnecessary database requests.
-         * @uses filter xi_events_date_format
+         * @filter xi_events_date_format
+         *     used to override the plugin's default date format.
+         * @filter xi_events_time_format
+         *     used to override the plugin's default time format.
          */
         public static function render_event_time($event_id, $event_meta) {
-            $same_day_event = true;
+            $same_day_event = $event_meta['xi_event_start_raw'] == $event_meta['xi_event_end_raw'];
             $all_day_event = boolval($event_meta['xi_event_all_day']);
 
             $start_timestamp = strtotime($event_meta['xi_event_start_raw']);
