@@ -8,9 +8,8 @@
             add_action('edited_' . XiEvents::$category_taxonomy_name, array('XiCategorymeta', 'save_category_meta'));
             add_action('create_' . XiEvents::$category_taxonomy_name, array('XiCategorymeta', 'save_category_meta'));
 
-            // See comments below. TODO: Implement.
-            //add_filter('manage_edit-' . XiEvents::$category_taxonomy_name . '_columns', array('XiCategorymeta', 'category_edit_columns'));
-            //add_action('manage_' . XiEvents::$category_taxonomy_name . '_custom_column', array('XiCategorymeta', 'category_custom_columns'));
+            add_filter('manage_edit-' . XiEvents::$category_taxonomy_name . '_columns', array('XiCategorymeta', 'category_edit_columns'), 10);
+            add_action('manage_' . XiEvents::$category_taxonomy_name . '_custom_column', array('XiCategorymeta', 'category_custom_columns'), 10, 3);
         }
 
         public static function add_meta_fields() {
@@ -27,17 +26,17 @@
         }
 
         public static function category_edit_columns($columns) {
-            // For reasons unknown the category_custom_columns function below is missing arg 2/3, which renders this useless for now.
-            // Bug in 4.4?
-            // TODO: Implement.
-            //$columns['xicolor'] = "Color";
+            $columns['xicolor'] = "Color";
             return $columns;
         }
 
         public static function category_custom_columns($content, $column_name, $term_id) {
             switch ($column_name) {
                 case "xicolor":
-                    echo get_term_meta($term_id, 'xi_category_color');
+                    echo "<div class=\"xi_admin_color_box\">
+                        <div class=\"inner\" style=\"background: " . get_term_meta($term_id, 'xi_category_color', true) ."\">
+                        </div>
+                    </div>";
                     break;
             }
         }

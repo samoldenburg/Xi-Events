@@ -8,6 +8,20 @@
     padding-right: 20px;
 }
 
+.xi_admin_color_box {
+    width: 20px;
+    height: 20px;
+    box-shadow: 1px 1px 1px #ccc;
+    border: 1px solid #ccc;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+.xi_admin_color_box .inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+}
 
 /* Date Picker Default Styles */
 .ui-datepicker {
