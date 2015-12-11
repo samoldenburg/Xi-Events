@@ -5,11 +5,12 @@
             add_action('wp_ajax_events_json', array('XiAjax', 'events_json'));
             add_action('wp_ajax_no_priv_events_json', array('XiAjax', 'events_json'));
         }
-        
+
         /**
          * This is more or less proof of concept at this point. Needs to be significantly expanded upon.
          * TODO: Deal with multiple categorization
          * TODO: Other filters?
+         * TODO: Nonce input for security and stuff.
          */
         public static function events_json() {
             global $xi_json_data;

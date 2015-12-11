@@ -5,11 +5,10 @@
 <div class="xi_event-meta">
     <?php /* ?>
     If you want to see the contents of the available event meta, display this:
-
-    */ ?>
     <pre style="font-size: 11px; line-height: 11px; max-height: 300px; overflow-y: auto;">
         <?php print_r($xi_event_meta); ?>
     </pre>
+    */ ?>
     <h2>Event Details</h2>
     <p>
         <strong>Time:</strong> <?=XiEventmeta::render_event_time($xi_event_id, $xi_event_meta);?>
