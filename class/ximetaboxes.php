@@ -1,7 +1,7 @@
 <?php
     class XiMetaboxes {
 
-        public static function init_meta_boxes() {
+        public static function init() {
             add_action('edit_form_after_title', array('XiMetaboxes', 'register_meta_boxes'));
             add_action('save_post_' . XiEvents::$post_type_name, array('XiMetaboxes', 'save_event_meta'));
         }
@@ -56,6 +56,7 @@
                 'xi_event_start_formatted'      => XiUtilities::format_date_time(strtotime($full_start_time)),
                 'xi_event_start_raw'            => $full_start_time,
                 'xi_event_start_formatted_gmt'  => XiUtilities::format_date_time_gmt(strtotime($full_start_time)),
+                'xi_event_start_query_friendly' => date_i18n('Y-m-d', strtotime($full_start_time)),
 
                 'xi_event_start_time_hours'     => $_POST['event_start_time']['hours'],
                 'xi_event_start_time_minutes'   => $_POST['event_start_time']['minutes'],
@@ -67,6 +68,7 @@
                 'xi_event_end_formatted'        => XiUtilities::format_date_time(strtotime($full_end_time)),
                 'xi_event_end_raw'              => $full_end_time,
                 'xi_event_end_formatted_gmt'    => XiUtilities::format_date_time_gmt(strtotime($full_end_time)),
+                'xi_event_end_query_friendly'   => date_i18n('Y-m-d', strtotime($full_end_time)),
 
                 'xi_event_end_time_hours'       => $_POST['event_end_time']['hours'],
                 'xi_event_end_time_minutes'     => $_POST['event_end_time']['minutes'],

@@ -6,6 +6,7 @@
          */
         public static function init() {
             add_shortcode('xi_event_details', array('XiShortcode', 'event_details'));
+            add_shortcode('xi_calendar', array('XiShortcode', 'calendar'));
         }
 
         /**
@@ -25,6 +26,28 @@
             $xi_event_id = $atts['id'];
             $xi_event_meta = XiEventmeta::clean_meta(get_post_meta($xi_event_id));
             $template = XiUtilities::get_include_template('shortcode_event-details.php');
+            return $template;
+        }
+
+        /**
+         * Show a calendar. Requires a calendar ID.
+         */
+        public static function calendar($atts) {
+            $atts = shortcode_atts(
+                array(
+                    'id' => ''
+                ),
+                $atts,
+                'xi_event_details'
+            );
+
+            if (empty($atts['id'])) {
+                return "A calendar ID is required. Use [xi_calendar id=\"1\"].";
+            }
+
+            global $xi_calendar_id;
+            $xi_calendar_id = intval($atts['id']);
+            $template = XiUtilities::get_include_template('shortcode_event-calendar.php');
             return $template;
         }
     }

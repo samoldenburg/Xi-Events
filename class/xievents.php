@@ -16,15 +16,20 @@
             add_action('init', array('XiEvents', 'register_taxonomies'));
             add_action('admin_menu', array('XiEvents', 'add_settings_pages'));
             add_action('admin_menu', array('XiEvents', 'add_help_pages'));
+
             add_action('admin_print_styles', array('XiEvents', 'admin_styles'));
             add_action('admin_enqueue_scripts', array('XiEvents', 'admin_scripts'));
+
+            add_action('wp_enqueue_scripts', array('XiEvents', 'frontend_assets'));
+
             add_action('admin_notices', array($xi_error, 'init_display_errors'), 99);
 
-            add_filter('the_content', array('XiEvents', 'load_single_template'));
+            add_filter('the_content', array('XiEvents', 'apply_event_information'));
 
-            XiMetaboxes::init_meta_boxes();
+            XiMetaboxes::init();
             XiCategorymeta::init();
             XiShortcode::init();
+            XiAjax::init();
         }
 
         public static function plugin_activation_hook() {
@@ -171,6 +176,15 @@
             wp_enqueue_script('xi_admin_js', XI__PLUGIN_URL . 'assets/js/admin.js');
         }
 
+        public static function frontend_assets() {
+            wp_enqueue_script('jquery');
+            wp_enqueue_style('fullcalendar', XI__PLUGIN_URL . 'vendor/fullcalendar-2.5.0/fullcalendar.min.css');
+            wp_enqueue_script('moment', XI__PLUGIN_URL . 'vendor/moment/moment.min.js');
+            wp_enqueue_script('fullcalendar', XI__PLUGIN_URL . 'vendor/fullcalendar-2.5.0/fullcalendar.min.js');
+            wp_enqueue_script('xi_frontend_javascript', XI__PLUGIN_URL . 'assets/js/frontend.js');
+            wp_enqueue_style('xi_frontend_css', XI__PLUGIN_URL . 'assets/css/frontend.css');
+        }
+
         /**
          * @filter - xi_single_event_template
          *     Override how the event meta is displayed.
@@ -179,7 +193,7 @@
          *     Control whether the event meta is prepended or appended to the post content for the single view.
          *     Default is prepend.
          */
-        public static function load_single_template($content) {
+        public static function apply_event_information($content) {
             global $post;
             if (is_singular(self::$post_type_name)) {
                 $single_event_content = apply_filters('xi_single_event_template', '[xi_event_details]');
