@@ -1,6 +1,6 @@
 <?php
     // Template to render out the event details shortcode. Used by the core plugin for the single event view.
-    global $xi_event_id, $xi_event_meta;
+    global $xi_event_id, $xi_event_meta, $xi_shortcode_attributes;
 ?>
 <div class="xi_event-meta">
     <?php /* ?>
@@ -9,8 +9,8 @@
         <?php print_r($xi_event_meta); ?>
     </pre>
     */ ?>
-    <h2>Event Details</h2>
-    <p>
+    <h2 class="xi_event-details-heading">Event Details</h2>
+    <p class="xi_event-details">
         <strong>Time:</strong> <?=XiEventmeta::render_event_time($xi_event_id, $xi_event_meta);?>
         <?php
             $categories = wp_get_post_terms($xi_event_id, XiEvents::$category_taxonomy_name);
@@ -23,20 +23,21 @@
         ?>
     </p>
     <?php if (!empty($xi_event_meta['xi_event_venue_formatted_address'])) : ?>
-        <h2>Venue Details</h2>
-        <p>
+        <h2 class="xi_venue-details-heading">Venue Details</h2>
+        <p class="xi_venue-details">
             <strong><?=$xi_event_meta['xi_event_venue_name'];?></strong><br />
             <?=$xi_event_meta['xi_event_venue_formatted_address'];?>
+
             <?php if ($xi_event_meta['xi_event_venue_google_map'] == "link") : ?>
-                <br /><a href="https://www.google.com/maps/?q=<?=urlencode($xi_event_meta['xi_event_venue_formatted_address']);?>" target="_blank">Show on map</a>
+                <br /><a class="xi_google-map-link" href="https://www.google.com/maps/?q=<?=urlencode($xi_event_meta['xi_event_venue_formatted_address']);?>" target="_blank">Show on map</a>
             <?php endif; ?>
         </p>
         <?php if ($xi_event_meta['xi_event_venue_google_map'] == "yes") : ?>
-            <p>
+            <p class="xi_venue-details-google-map">
                 <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD8EQ7EtpgA7ZzM37_CroEjuMX__vEf-NM&q=<?=urlencode($xi_event_meta['xi_event_venue_formatted_address']);?>" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
             </p>
         <?php endif; ?>
     <?php endif; ?>
 
-    <h2>Event Information</h2>
+    <h2 class="xi_event-content-heading">Event Information</h2>
 </div>

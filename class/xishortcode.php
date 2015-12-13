@@ -22,9 +22,10 @@
                 'xi_event_details'
             );
             // $xi_event_id is the ID of the event invoking the shortcode
-            global $xi_event_id, $xi_event_meta;
+            global $xi_event_id, $xi_event_meta, $xi_shortcode_attributes;
             $xi_event_id = $atts['id'];
             $xi_event_meta = XiEventmeta::clean_meta(get_post_meta($xi_event_id));
+            $xi_shortcode_attributes = $atts;
             $template = XiUtilities::get_include_template('shortcode_event-details.php');
             return $template;
         }
