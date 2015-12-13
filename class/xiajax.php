@@ -18,8 +18,9 @@
             $calendar_id = intval($_POST['calendar_id']);
             $start_date = $_POST['start'];
             $end_date = $_POST['end'];
+            $category_id = intval($_POST['category_id']);
 
-            $results = XiQuery::get_events_for_range($calendar_id, $start_date, $end_date);
+            $results = XiQuery::get_events($calendar_id, $start_date, $end_date, $category_id);
             if ($results === false)
                 die(json_encode(array()));
 
@@ -42,6 +43,7 @@
 
                     // The last two fields depend on categories set up. This needs more attention for filtering.
                     $categories = wp_get_post_terms($xi_event_id, XiEvents::$category_taxonomy_name);
+                    $event->categories = $categories;
                     if (count($categories) == 1) {
                         // Is there a more clever way to handle multiple categorization??
                         $event->className = 'category-' . $categories[0]->slug;

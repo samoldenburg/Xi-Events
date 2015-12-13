@@ -35,7 +35,8 @@
         public static function calendar($atts) {
             $atts = shortcode_atts(
                 array(
-                    'id' => ''
+                    'id' => '',
+                    'show_category_filter' => 'true'
                 ),
                 $atts,
                 'xi_event_details'
@@ -45,8 +46,9 @@
                 return "A calendar ID is required. Use [xi_calendar id=\"1\"].";
             }
 
-            global $xi_calendar_id;
+            global $xi_calendar_id, $xi_shortcode_attributes;
             $xi_calendar_id = intval($atts['id']);
+            $xi_shortcode_attributes = $atts;
             $template = XiUtilities::get_include_template('shortcode_event-calendar.php');
             return $template;
         }
