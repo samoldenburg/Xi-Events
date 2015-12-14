@@ -51,6 +51,10 @@
             $wp_rewrite->flush_rules();
         }
 
+        /**
+         * @filter xi_post_type_labels - Override the display labels
+         * @filter xi_post_type_arguments - Override the register_post_type arguments.
+         */
         public static function register_event_post_type() {
             $labels = array(
                 'name'               => _x( 'Events', 'post type general name', 'xi-events' ),
@@ -68,6 +72,7 @@
                 'not_found'          => __( 'No Events found.', 'xi-events' ),
                 'not_found_in_trash' => __( 'No Events found in Trash.', 'xi-events' )
             );
+            $labels = apply_filters('xi_post_type_labels', $labels);
 
             $args = array(
                 'labels'             => $labels,
@@ -85,9 +90,21 @@
                 'menu_icon'          => 'dashicons-calendar',
                 'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
             );
+            $args = apply_filters('xi_post_type_arguments', $args);
             register_post_type( self::$post_type_name, $args );
         }
 
+        /**
+         * @filter xi_enable_tag_taxonomy - Defaults to true, enable or disable tag taxonomy.
+         *     for now the other two taxonomies are required, they may be configurable in the future
+         *     but tags are minimally invasive to begin with
+         * @filter xi_calendar_taxonomy_labels - Override the display labels
+         * @filter xi_category_taxonomy_labels - Override the display labels
+         * @filter xi_tag_taxonomy_labels - Override the display labels
+         * @filter xi_calendar_taxonomy_arguments - Override the register_taxonomy arguments.
+         * @filter xi_category_taxonomy_arguments - Override the register_taxonomy arguments.
+         * @filter xi_tag_taxonomy_arguments - Override the register_taxonomy arguments.
+         */
         public static function register_taxonomies() {
             $labels = array(
         	    'name'              => _x( 'Calendars', 'taxonomy general name' ),
@@ -102,6 +119,7 @@
         		'new_item_name'     => __( 'New Calendar Name' ),
         		'menu_name'         => __( 'Calendars' ),
         	);
+            $labels = apply_filters('xi_calendar_taxonomy_labels', $labels);
 
         	$args = array(
         		'hierarchical'      => true,
@@ -111,6 +129,7 @@
         		'query_var'         => true,
         		'rewrite'           => array( 'slug' => 'calendar' ),
         	);
+            $args = apply_filters('xi_calendar_taxonomy_arguments', $args);
         	register_taxonomy( self::$calendar_taxonomy_name, array( self::$post_type_name ), $args );
 
             $labels = array(
@@ -126,6 +145,7 @@
         		'new_item_name'     => __( 'New Event Category Name' ),
         		'menu_name'         => __( 'Event Categories' ),
         	);
+            $labels = apply_filters('xi_category_taxonomy_labels', $labels);
 
         	$args = array(
         		'hierarchical'      => true,
@@ -134,30 +154,37 @@
         		'show_admin_column' => true,
         		'rewrite'           => array( 'slug' => self::$category_taxonomy_slug ),
         	);
+            $args = apply_filters('xi_category_taxonomy_arguments', $args);
         	register_taxonomy( self::$category_taxonomy_name, array( self::$post_type_name ), $args );
 
-            $labels = array(
-        	    'name'              => _x( 'Event Tags', 'taxonomy general name' ),
-        		'singular_name'     => _x( 'Event Tag', 'taxonomy singular name' ),
-        		'search_items'      => __( 'Search Event Tags' ),
-        		'all_items'         => __( 'All Event Tags' ),
-        		'parent_item'       => __( 'Parent Event Tag' ),
-        		'parent_item_colon' => __( 'Parent Event Tag:' ),
-        		'edit_item'         => __( 'Edit Event Tag' ),
-        		'update_item'       => __( 'Update Event Tag' ),
-        		'add_new_item'      => __( 'Add New Event Tag' ),
-        		'new_item_name'     => __( 'New Event Tag Name' ),
-        		'menu_name'         => __( 'Event Tags' ),
-        	);
+            $xi_enable_tag_taxonomy = apply_filters('xi_enable_tag_taxonomy', true);
 
-        	$args = array(
-        		'hierarchical'      => false,
-        		'labels'            => $labels,
-        		'show_ui'           => true,
-        		'show_admin_column' => true,
-        		'rewrite'           => array( 'slug' => 'event-tag' ),
-        	);
-        	register_taxonomy( self::$tag_taxonomy_name, array( self::$post_type_name ), $args );
+            if ($xi_enable_tag_taxonomy) {
+                $labels = array(
+            	    'name'              => _x( 'Event Tags', 'taxonomy general name' ),
+            		'singular_name'     => _x( 'Event Tag', 'taxonomy singular name' ),
+            		'search_items'      => __( 'Search Event Tags' ),
+            		'all_items'         => __( 'All Event Tags' ),
+            		'parent_item'       => __( 'Parent Event Tag' ),
+            		'parent_item_colon' => __( 'Parent Event Tag:' ),
+            		'edit_item'         => __( 'Edit Event Tag' ),
+            		'update_item'       => __( 'Update Event Tag' ),
+            		'add_new_item'      => __( 'Add New Event Tag' ),
+            		'new_item_name'     => __( 'New Event Tag Name' ),
+            		'menu_name'         => __( 'Event Tags' ),
+            	);
+                $labels = apply_filters('xi_post_type_labels', $labels);
+
+            	$args = array(
+            		'hierarchical'      => false,
+            		'labels'            => $labels,
+            		'show_ui'           => true,
+            		'show_admin_column' => true,
+            		'rewrite'           => array( 'slug' => 'event-tag' ),
+            	);
+                $args = apply_filters('xi_tag_taxonomy_labels', $args);
+            	register_taxonomy( self::$tag_taxonomy_name, array( self::$post_type_name ), $args );
+            }
         }
 
 
@@ -191,16 +218,21 @@
         }
 
         /**
-         * @filter - xi_single_event_template
+         * @filter xi_enable_apply_event_information -
+         *     Disable this whole function by returning false with your callback function.
+         * @filter xi_single_event_template -
          *     Override how the event meta is displayed.
          *     By default will invoke the [xi_event_details] shortcode
-         * @filter - xi_single_event_prepend
+         * @filter xi_single_event_prepend -
          *     Control whether the event meta is prepended or appended to the post content for the single view.
          *     Default is prepend.
          */
         public static function apply_event_information($content) {
             global $post;
-            if (is_singular(self::$post_type_name)) {
+
+            $xi_enable_apply_event_information = apply_filters('xi_enable_apply_event_information', true);
+
+            if ($xi_enable_apply_event_information && is_singular(self::$post_type_name)) {
                 $single_event_content = apply_filters('xi_single_event_template', '[xi_event_details]');
                 $single_event_prepend = apply_filters('xi_single_event_prepend', true);
 

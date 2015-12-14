@@ -16,7 +16,7 @@
 
         /**
          * This is mostly useful for update_post_meta
-         * see: https://codex.wordpress.org/Function_Reference/update_post_meta#Character_Escaping
+         * @see https://codex.wordpress.org/Function_Reference/update_post_meta#Character_Escaping
          */
         public static function json_encode($content) {
             return wp_slash(json_encode($content));
@@ -141,7 +141,6 @@
          * organized. All available folders are:
          *  shortcode
          *  widget
-         *
          */
         public static function parse_template_location($template) {
             if (strpos($template, '_') !== false) {

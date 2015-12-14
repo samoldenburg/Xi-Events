@@ -4,7 +4,8 @@
      * Due to Wordpress needing to perform a redirect after save_post, we need to hook into the redirect_post_location filter
      * and append a query argument for which error code we'd like to display. To keep URLs clean, this class will numerically
      * reference error codes. The alternative would be to append a string to the URL with the error message, but in my opinion,
-     * this would look sloppy from a UX perspective.
+     * this would look sloppy from a UX perspective. Another alternative would be cookies or session data, which may be used
+     * instead in the future.
      *
      * global $xi_error; is available to everything if this plugin is activated.
      * throw errors with $xi_error->throw_error($error_code);
