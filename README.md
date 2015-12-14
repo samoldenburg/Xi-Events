@@ -2,6 +2,12 @@
 
 Currently in development and non-functional, Xi Events intends to be a simple to use and flexible events system for Wordpress, without any extra frills or features that are not necessary for general events/calendar usage.
 
+Built with developers in mind, this plugin will ship with bare-bones at best styling, and in most cases no styling at all. This plugin is not intended to be used as a plug and play option with any theme, rather as a tool to assist with developing a beautiful front end interface for an events system.
+
+The plugin will also ship with a comprehensive feature list, intended to hopefully reduce the need to code in custom features. That being said, every web project is unique and has its own needs, and thus this plugin intends to be easy to modify, not only from a templating and styling perspective, but to edit the code itself as well.
+
+Once complete, a full list of filters and actions available will be published. Most simple modifications can be done in the theme/child theme/child plugin, but more invasive modifications may require modifying the plugin source, and as such is laid out in a way that encourages this.
+
 While the majority of classes in this plugin are object oriented, they are mostly static and used for namespace and organizational purposes.
 
 # Required Version
@@ -18,12 +24,7 @@ Xi Events requires Wordpress 4.4 or higher. We make use of the brand new term_me
 
 # Planned Features
 * Event Recurrence
-* Google Maps and automatic Geocoding Functionality
-* List View
-* Calendar View
 * Map View
-* Shortcodes to display views
-* Widgets for upcoming events and small calendars
-* Fully customizable templates and an option to completely disable front end styles. Every single template, regardless of if its for a shortcode, widget, or general template output is 100% customizable, and override-able in themes or child plugins.
+* Miniature calendar widget
 * Minimally invasive taxonomies to support custom taxonomy additions
 * Multiple Calendar support
