@@ -7,8 +7,12 @@
         public static $category_taxonomy_slug = 'event-category';
         public static $tag_taxonomy_name = 'xitags';
 
-
-        // Init hooks
+        /**
+         * Initial hooks
+         * Add more hooks from other classes init functions. To me, a giant list of add_action/add_filter is not
+         * an appealing way to organize a plugin. The hooks here are the general hooks that handle the base
+         * functionality of the plugin, such as setting up post types, taxonomies, admin menus, etc.
+         */
         public static function init() {
             global $xi_error;
 
@@ -29,6 +33,7 @@
             XiMetaboxes::init();
             XiCategorymeta::init();
             XiShortcode::init();
+            XiWidget::init();
             XiAjax::init();
         }
 

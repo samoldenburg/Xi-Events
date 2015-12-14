@@ -77,7 +77,66 @@
                     }
                 }
             }
+            wp_reset_postdata();
             asort($cats);
             return $cats;
+        }
+
+        public static function get_upcoming_events($limit = 3, $terms = false) {
+            $args = array(
+                'post_type'     => XiEvents::$post_type_name,
+                'meta_key'      => 'xi_event_start_query_friendly',
+                'meta_type'    => 'DATE',
+                'orderby'       => 'meta_value title',
+                'order'         => 'ASC',
+                'posts_per_page' => $limit,
+                'meta_query'    => array(
+                    array(
+                        'key'       => 'xi_event_start_query_friendly',
+                        'value'     => date_i18n('Y-m-d'),
+                        'compare'   => '>=',
+                        'type'      => 'DATE'
+                    )
+                ),
+            );
+
+            if ($terms !== false && is_array($terms)) {
+                $args['tax_query'] = array();
+                $args['tax_query']['relation'] = "AND";
+                foreach ($terms as $taxonomy => $value) {
+                    if ($value['filter'] == "1") {
+                        unset($value['filtered']);
+                        $args['tax_query'][] = array(
+                            'taxonomy'  => $taxonomy,
+                            'terms'     => $value,
+                            'operator'  => "IN"
+                        );
+                    }
+                }
+            }
+
+            $query = new WP_Query($args);
+            $events = array();
+            if ($query->have_posts()) {
+                while ($query->have_posts()) {
+                    $query->the_post();
+
+                    $event = new stdClass();
+                    $event->ID = get_the_ID();
+                    $event->permalink = get_the_permalink();
+                    $event->title = get_the_title();
+
+                    $start_timestamp = strtotime(get_post_meta($event->ID, 'xi_event_start_raw', true));
+                    $start_timestamp = strtotime(get_post_meta($event->ID, 'xi_event_end_raw', true));
+                    $date_format = apply_filters('xi_events_date_format', 'm/d/Y');
+                    $event->date = date_i18n($date_format, $start_timestamp);
+                    $event->start_timestamp = $start_timestamp;
+                    $event->end_timestamp = $end_timestamp;
+
+                    $events[] = $event;
+                }
+            }
+            wp_reset_postdata();
+            return $events;
         }
     }
