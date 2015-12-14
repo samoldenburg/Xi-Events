@@ -14,6 +14,7 @@ Xi Events requires Wordpress 4.4 or higher. We make use of the brand new term_me
 * Google Maps Integration and automatic Geocoding Functionality
 * [xi_event_details] Basic Shortcode Implementation (Will expand further in the future)
 * [xi_calendar] Shortcode with available category filter. Renders out a calendar with events color coded by category (which is also configurable directly in wp-admin for each category). Example usage: [xi_calendar id="1" show_category_filter="false"]
+* Upcoming Events Widget - with flexible taxonomy support to allow for filtering by specific terms. All taxonomies registered to the xievents post type are automatically filterable with this widget.
 
 # Planned Features
 * Event Recurrence
