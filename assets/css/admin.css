@@ -8,6 +8,11 @@
     padding-right: 20px;
 }
 
+#xievents-eventmeta .weekdate_select tr td {
+    padding-right: 0px;
+    width: 50px;
+}
+
 .xi_admin_color_box {
     width: 20px;
     height: 20px;
@@ -24,6 +29,10 @@
 }
 
 /* Date Picker Default Styles */
+td.ui-state-highlight {
+    background: rgba(0, 116, 162, 0.54)!important;
+}
+
 .ui-datepicker {
 	padding: 0;
 	border: 1px solid #ddd;

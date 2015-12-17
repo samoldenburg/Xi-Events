@@ -75,6 +75,17 @@
                 'xi_event_end_time_ampm'        => $_POST['event_end_time']['ampm'],
 
                 'xi_event_recurrence'           => $_POST['event_recurrence'],
+                'xi_weekly_recurrence_days'     => XiUtilities::json_encode($_POST['weekly_recurrence_days']),
+                'xi_recurrence_monthly_type'    => $_POST['recurrence_monthly_type'],
+                'xi_recurrence_monthly_weeknum' => $_POST['recurrence_monthly_weeknum'],
+                'xi_recurrence_monthly_weekday' => $_POST['recurrence_monthly_weekday'],
+                'xi_recurrence_yearly_type'     => $_POST['recurrence_yearly_type'],
+                'xi_recurrence_yearly_weeknum'  => $_POST['recurrence_yearly_weeknum'],
+                'xi_recurrence_yearly_weekday'  => $_POST['recurrence_yearly_weekday'],
+                'xi_recurrence_yearly_month'    => $_POST['recurrence_yearly_month'],
+                'xi_custom_recurrence_dates'    => $_POST['custom_recurrence_dates'],
+                'xi_recurrence_exceptions'      => $_POST['recurrence_exceptions'],
+                'xi_recurrence_end'             => $_POST['recurrence_end'],                
 
                 'xi_event_venue_name'           => $_POST['event_venue_name'],
                 'xi_event_venue_address_1'      => $_POST['event_venue_address_1'],
