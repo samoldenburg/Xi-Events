@@ -85,7 +85,7 @@
                 'xi_recurrence_yearly_month'    => $_POST['recurrence_yearly_month'],
                 'xi_custom_recurrence_dates'    => $_POST['custom_recurrence_dates'],
                 'xi_recurrence_exceptions'      => $_POST['recurrence_exceptions'],
-                'xi_recurrence_end'             => $_POST['recurrence_end'],                
+                'xi_recurrence_end'             => $_POST['recurrence_end'],
 
                 'xi_event_venue_name'           => $_POST['event_venue_name'],
                 'xi_event_venue_address_1'      => $_POST['event_venue_address_1'],
@@ -118,6 +118,7 @@
                 foreach ($save_meta as $meta_key => $meta_value) {
                     update_post_meta($post_id, $meta_key, $meta_value);
                 }
+                XiEventMeta::create_recurrence($post_id, $save_meta);
             } else {
                 global $xi_error;
                 $xi_error->throw_error($valid);

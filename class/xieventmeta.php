@@ -54,4 +54,113 @@
                 }
             }
         }
+
+
+        /**
+         * Switch function for rendering recurrence dates out.
+         */
+        public static function create_recurrence($post_id, $save_meta) {
+            $recurrence_type = $save_meta['xi_event_recurrence'];
+
+            // Remove any existing dates of they exist
+            delete_post_meta($post_id, 'xi_recurrence_date');
+
+            // Set up the absolute end - we need to make an assumption here or database space will be ruined!
+            $max_date = !empty($save_meta['xi_recurrence_end']) ? $save_meta['xi_recurrence_end'] : date('m/d/Y', strtotime("+10 years"));
+
+            // They can't even get here due to an error being thrown if start date isn't set, so we can just do this:
+            $start_time = strtotime($save_meta['xi_event_start_date_raw']);
+
+            switch ($recurrence_type) {
+                case "daily":
+                    $recurrence_dates = XiEventMeta::get_daily_recurrence_dates($save_meta, $start_time, $max_date);
+                    break;
+                case "weekly":
+                    $recurrence_dates = XiEventMeta::get_weekly_recurrence_dates($save_meta, $start_time, $max_date);
+                    break;
+                case "monthly":
+                    $recurrence_dates = XiEventMeta::get_monthly_recurrence_dates($save_meta, $start_time, $max_date);
+                    break;
+                case "yearly":
+                    $recurrence_dates = XiEventMeta::get_yearly_recurrence_dates($save_meta, $start_time, $max_date);
+                    break;
+                case "custom":
+                    $recurrence_dates = XiEventMeta::get_custom_recurrence_dates($save_meta, $start_time, $max_date);
+                    break;
+                default:
+                    //none!
+                    break;
+            }
+
+            // Now add them all
+            foreach ($recurrence_dates as $date) {
+                add_post_meta($post_id, 'xi_recurrence_date', $date);
+            }
+        }
+
+        /**
+         * Build out daily recurrence dates based on values in save_meta.
+         */
+        public static function get_daily_recurrence_dates($save_meta, $start_time, $max_date) {
+            $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
+
+            $recurrence_dates = array();
+
+            return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
+        }
+
+        /**
+         * Build out weekly recurrence dates based on values in save_meta.
+         */
+        public static function get_weekly_recurrence_dates($save_meta, $start_time, $max_date) {
+            $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
+            $recurrence_dates = array();
+
+            return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
+        }
+
+        /**
+         * Build out monthly recurrence dates based on values in save_meta.
+         */
+        public static function get_monthly_recurrence_dates($save_meta, $start_time, $max_date) {
+            $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
+            $recurrence_dates = array();
+
+            return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
+        }
+
+        /**
+         * Build out yearly recurrence dates based on values in save_meta.
+         */
+        public static function get_yearly_recurrence_dates($save_meta, $start_time, $max_date) {
+            $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
+            $recurrence_dates = array();
+
+            return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
+        }
+
+        /**
+         * Build out custom recurrence dates based on values in save_meta.
+         * This is the easiest one of them all since they'll have to provide a list of days anyway.
+         */
+        public static function get_custom_recurrence_dates($save_meta, $start_time, $max_date) {
+            $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
+            $custom_dates  = explode(",", $save_meta['xi_custom_recurrence_dates']);
+
+            // Then just diff them..done!
+            $recurrence_dates = array_diff($custom_dates, $exclude_dates);
+
+            return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
+        }
+
+        /**
+         * Convert dates to query friendly versions (Y-m-d)
+         */
+        public static function convert_dates_to_query_friendly($dates) {
+            $new_dates = array();
+            foreach ($dates as $date) {
+                $new_dates[] = date("Y-m-d", strtotime($date));
+            }
+            return $new_dates;
+        }
     }
