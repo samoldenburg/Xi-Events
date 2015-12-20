@@ -105,9 +105,16 @@
                 'order'         => 'ASC',
                 'posts_per_page' => $limit,
                 'meta_query'    => array(
+                    'relation'      => 'OR',
                     array(
                         'key'       => 'xi_event_start_query_friendly',
-                        'value'     => date_i18n('Y-m-d'),
+                        'value'     => date('Y-m-d'),
+                        'compare'   => '>=',
+                        'type'      => 'DATE'
+                    ),
+                    array(
+                        'key'       => 'xi_recurrence_date',
+                        'value'     => date('Y-m-d'),
                         'compare'   => '>=',
                         'type'      => 'DATE'
                     )
@@ -148,9 +155,37 @@
                     $event->end_timestamp = $end_timestamp;
 
                     $events[] = $event;
+
+                    $date1 = new DateTime(get_post_meta($event->ID, 'xi_event_start_query_friendly', true));
+                    $date2 = new DateTime(get_post_meta($event->ID, 'xi_event_end_query_friendly', true));
+                    $days_diff = $date2->diff($date1)->format("%a");
+
+
+                    // List out the recurrence dates if they exist
+                    $recurrence_dates = get_post_meta($event->ID, 'xi_recurrence_date', false);
+                    foreach ($recurrence_dates as $recurrence_date) {
+                        $recurrence_event = new stdClass();
+                        $recurrence_event->ID = $event->ID;
+                        $recurrence_event->title = $event->title;
+                        $recurrence_event->start_timestamp = date_i18n('U', strtotime($recurrence_date));
+                        $recurrence_event->end_timestamp = date_i18n('U', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                        $recurrence_event->date = date_i18n($date_format, $recurrence_event->start_timestamp);
+                        $recurrence_event->permalink = $event->permalink . ((parse_url($event->permalink, PHP_URL_QUERY) == NULL) ? '?' : '&') . 'instance=' . $recurrence_date;
+                        $events[] = $recurrence_event;
+                    }
+
+                    // The events can be out of order and contain more events than desired now, so we need to filter down
+                    $events = XiQuery::filter_events($events, $limit);
                 }
             }
             wp_reset_postdata();
             return $events;
+        }
+
+        public static function filter_events($events, $limit) {
+            // First, lets sort them, this function is located in XI__PLUGIN_DIR/lib/functions.php
+            usort($events, 'xi_date_cmp_sort');
+            // Then just return a slice of the events based on the limit.
+            return array_slice($events, 0, $limit);
         }
     }

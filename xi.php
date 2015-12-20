@@ -11,6 +11,8 @@
 define('XI__PLUGIN_URL', plugin_dir_url( __FILE__ ));
 define('XI__PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 
+include XI__PLUGIN_DIR . '/lib/functions.php';
+
 foreach (glob(XI__PLUGIN_DIR . '/class/*.php') as $class)
     include $class;
 
