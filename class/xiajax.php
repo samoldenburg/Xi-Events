@@ -8,7 +8,6 @@
 
         /**
          * This is more or less proof of concept at this point. Needs to be significantly expanded upon.
-         * @TODO Deal with multiple categorization
          * @TODO Other filters?
          * @TODO Nonce input for security and stuff.
          */
@@ -48,7 +47,15 @@
                         // Is there a more clever way to handle multiple categorization??
                         $event->className = 'category-' . $categories[0]->slug;
                         $event->color = get_term_meta($categories[0]->term_id, 'xi_category_color', true);
-                    } else {
+                    }
+                    elseif(count($categories) > 1) {
+                        $categories_str = "";
+                        foreach ($categories as $category) {
+                            $categories_str .= ' category-' . $category->slug;
+                        }
+                        $event->className = trim($categories_str);
+                    }
+                    else {
                         $event->className = 'uncategorized';
                         // TODO: color?
                     }
