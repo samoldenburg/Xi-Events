@@ -105,26 +105,92 @@
             $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
 
             $recurrence_dates = array();
+            $last_time = $start_time;
+
+            while($last_time <= strtotime($max_date)) {
+                $next_date = date("m/d/Y", strtotime("+1 day", $last_time));
+
+                $last_time = strtotime($next_date);
+                if (!in_array($next_date, $exclude_dates) && $last_time <= strtotime($max_date))
+                    $recurrence_dates[] = $next_date;
+            }
 
             return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
         }
 
         /**
          * Build out weekly recurrence dates based on values in save_meta.
+         * These are pretty straight forward, just loop through the week, calculate how many days to add at a time to
+         * each previous date. date("N") is handy for this (and is required based on how the metaboxes are set up).
          */
         public static function get_weekly_recurrence_dates($save_meta, $start_time, $max_date) {
             $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
+            $weekly_days = json_decode(stripslashes($save_meta['xi_weekly_recurrence_days']));
+
             $recurrence_dates = array();
+            $last_time = $start_time;
+
+            while($last_time <= strtotime($max_date)) {
+                $last_day_num = date("N", $last_time);
+                $days_elapsed = 0;
+
+                // This is safe because we validate that at least one date exists before this code can be reached.
+                // At most it will loop 7 times.
+                while (true) {
+                    $last_day_num = ($last_day_num + 1) > 7 ? 1 : ($last_day_num + 1);
+                    $days_elapsed++;
+                    if (isset($weekly_days->{$last_day_num}))
+                        break;
+                }
+
+                $next_date = date("m/d/Y", strtotime("+{$days_elapsed} days", $last_time));
+                $last_time = strtotime($next_date);
+                if (!in_array($next_date, $exclude_dates) && $last_time <= strtotime($max_date))
+                    $recurrence_dates[] = $next_date;
+            }
 
             return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
         }
 
         /**
          * Build out monthly recurrence dates based on values in save_meta.
+         * There are two types available here:
+         *  Monthly By Date -
+         *      The event falls on the same day every month (e.g. Jan 1, Feb 1, Mar 1, etc.)
+         *  Monthly By Day of Week -
+         *      The event falls on the same day of the week for a given week in the month (e.g. Third Friday every month)
          */
         public static function get_monthly_recurrence_dates($save_meta, $start_time, $max_date) {
             $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
             $recurrence_dates = array();
+
+            if ($save_meta['xi_recurrence_monthly_type'] == "date") {
+                // Just repeat on +1 month
+                $last_time = $start_time;
+
+                while($last_time <= strtotime($max_date)) {
+                    $next_date = date("m/d/Y", strtotime("+1 month", $last_time));
+
+                    $last_time = strtotime($next_date);
+                    if (!in_array($next_date, $exclude_dates) && $last_time <= strtotime($max_date))
+                        $recurrence_dates[] = $next_date;
+                }
+            }
+            else {
+                // A little more complicated, but strtotime is magical...
+                $last_time = $start_time;
+                $weeknum = strtolower($save_meta['xi_recurrence_monthly_weeknum']);
+                $weekday = $save_meta['xi_recurrence_monthly_weekday'];
+
+                while($last_time <= strtotime($max_date)) {
+                    $new_start_month = date('F Y', strtotime("next month", $last_time));
+                    $next_date = date("m/d/Y", strtotime("$weeknum $weekday of $new_start_month"));
+
+                    $last_time = strtotime($next_date);
+                    if (!in_array($next_date, $exclude_dates) && $last_time <= strtotime($max_date))
+                        $recurrence_dates[] = $next_date;
+                }
+            }
 
             return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
         }
@@ -135,6 +201,36 @@
         public static function get_yearly_recurrence_dates($save_meta, $start_time, $max_date) {
             $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
             $recurrence_dates = array();
+
+            if ($save_meta['xi_recurrence_yearly_type'] == "date") {
+                // Just repeat on +1 month
+                $last_time = $start_time;
+
+                while($last_time <= strtotime($max_date)) {
+                    $next_date = date("m/d/Y", strtotime("+1 year", $last_time));
+
+                    $last_time = strtotime($next_date);
+                    if (!in_array($next_date, $exclude_dates) && $last_time <= strtotime($max_date))
+                        $recurrence_dates[] = $next_date;
+                }
+            }
+            else {
+                // A little more complicated, but strtotime is magical...
+                $last_time = $start_time;
+                $weeknum = strtolower($save_meta['xi_recurrence_yearly_weeknum']);
+                $weekday = $save_meta['xi_recurrence_yearly_weekday'];
+                $month = $save_meta['xi_recurrence_yearly_month'];
+
+                while($last_time <= strtotime($max_date)) {
+                    $new_next_year = intval(date('Y', strtotime("+1 year", $last_time)));
+                    $new_start_month = date('F Y', strtotime("$month $new_next_year"));
+                    $next_date = date("m/d/Y", strtotime("$weeknum $weekday of $new_start_month"));
+
+                    $last_time = strtotime($next_date);
+                    if (!in_array($next_date, $exclude_dates) && $last_time <= strtotime($max_date))
+                        $recurrence_dates[] = $next_date;
+                }
+            }
 
             return XiEventMeta::convert_dates_to_query_friendly($recurrence_dates);
         }

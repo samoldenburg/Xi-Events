@@ -162,7 +162,7 @@
             <td>
                 <select name="recurrence_monthly_type" id="recurrence_monthly_type">
                     <option value="date"<?=XiUtilities::set_select('xi_recurrence_monthly_type', 'date');?>>Monthly By Date</option>
-                    <option value="week"<?=XiUtilities::set_select('xi_recurrence_monthly_type', 'date');?>>Monthly By Day of Week</option>
+                    <option value="week"<?=XiUtilities::set_select('xi_recurrence_monthly_type', 'week');?>>Monthly By Day of Week</option>
                 </select>
             </td>
         </tr>
@@ -200,7 +200,7 @@
     <table>
         <tr>
             <td>
-                <label for="recurrence_yearly_type">Monthly Recurrence Type:</label>
+                <label for="recurrence_yearly_type">Yearly Recurrence Type:</label>
             </td>
             <td>
                 <select name="recurrence_yearly_type" id="recurrence_yearly_type">

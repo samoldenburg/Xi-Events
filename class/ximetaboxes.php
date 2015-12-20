@@ -128,6 +128,8 @@
         public static function validate_event($save_meta) {
             if (empty($save_meta['xi_event_start_date_raw']))
                 return 1;
+            elseif ($save_meta['xi_event_recurrence'] == "weekly" && $save_meta['xi_weekly_recurrence_days'] == "null")
+                return 2;
             return true;
         }
     }

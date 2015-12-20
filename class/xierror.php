@@ -41,6 +41,9 @@
                 case 1:
                     $message = "Event not saved - Start Date is required.";
                     break;
+                case 2:
+                    $message = "Event not saved - Weekly recurrence must occur on at least one day of the week.";
+                    break;
                 default:
                     $message = "Something went wrong but I don't have an assigned ERR_CODE to tell you more information. You should yell at the plugin author for this, he'll be terribly embarassed.";
             }
