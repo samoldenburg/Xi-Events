@@ -8,7 +8,7 @@ The plugin will also ship with a comprehensive feature list, intended to hopeful
 
 Once complete, a full list of filters and actions available will be published. Most simple modifications can be done in the theme/child theme/child plugin, but more invasive modifications may require modifying the plugin source, and as such is laid out in a way that encourages this.
 
-While the majority of classes in this plugin are object oriented, they are mostly static and used for namespace and organizational purposes.
+While the majority of code in this plugin is object oriented, the class functions are mostly static and used for namespace and organizational purposes.
 
 # Required Version
 Xi Events requires Wordpress 4.4 or higher. We make use of the brand new term_meta that was only just introduced in 4.4.
@@ -26,5 +26,3 @@ Xi Events requires Wordpress 4.4 or higher. We make use of the brand new term_me
 * Event Recurrence
 * Map View
 * Miniature calendar widget
-* Minimally invasive taxonomies to support custom taxonomy additions
-* Multiple Calendar support

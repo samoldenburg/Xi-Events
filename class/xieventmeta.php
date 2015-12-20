@@ -197,13 +197,14 @@
 
         /**
          * Build out yearly recurrence dates based on values in save_meta.
+         * This works just like the previous function, just accounts for +1 year instead of +1 month.
          */
         public static function get_yearly_recurrence_dates($save_meta, $start_time, $max_date) {
             $exclude_dates = explode(",", $save_meta['xi_recurrence_exceptions']);
             $recurrence_dates = array();
 
             if ($save_meta['xi_recurrence_yearly_type'] == "date") {
-                // Just repeat on +1 month
+                // Just repeat on +1 year
                 $last_time = $start_time;
 
                 while($last_time <= strtotime($max_date)) {

@@ -9,8 +9,15 @@
             $args = array(
                 'post_type'     => XiEvents::$post_type_name,
                 'meta_query'    => array(
+                    'relation'      => 'OR',
                     array(
                         'key'       => 'xi_event_start_query_friendly',
+                        'value'     => array($start_date, $end_date),
+                        'compare'   => 'BETWEEN',
+                        'type'      => 'DATE'
+                    ),
+                    array(
+                        'key'       => 'xi_recurrence_date',
                         'value'     => array($start_date, $end_date),
                         'compare'   => 'BETWEEN',
                         'type'      => 'DATE'
@@ -40,8 +47,15 @@
             $args = array(
                 'post_type'     => XiEvents::$post_type_name,
                 'meta_query'    => array(
+                    'relation'      => 'OR',
                     array(
                         'key'       => 'xi_event_start_query_friendly',
+                        'value'     => array($start_date, $end_date),
+                        'compare'   => 'BETWEEN',
+                        'type'      => 'DATE'
+                    ),
+                    array(
+                        'key'       => 'xi_recurrence_date',
                         'value'     => array($start_date, $end_date),
                         'compare'   => 'BETWEEN',
                         'type'      => 'DATE'

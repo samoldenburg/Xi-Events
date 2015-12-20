@@ -53,6 +53,27 @@
                         // TODO: color?
                     }
                     $events[] = $event;
+
+                    $date1 = new DateTime($xi_event_meta['xi_event_start_query_friendly']);
+                    $date2 = new DateTime($xi_event_meta['xi_event_end_query_friendly']);
+                    $days_diff = $date2->diff($date1)->format("%a");
+
+
+                    // List out the recurrence dates if they exist
+                    $recurrence_dates = get_post_meta($xi_event_id, 'xi_recurrence_date', false);
+                    foreach ($recurrence_dates as $recurrence_date) {
+                        $recurrence_event = new stdClass();
+                        $recurrence_event->id = $xi_event_id;
+                        $recurrence_event->title = $event->title;
+                        $recurrence_event->allDay = $event->allDay;
+                        $recurrence_event->start = date_i18n('c', strtotime($recurrence_date));
+                        $recurrence_event->end = date_i18n('c', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                        $recurrence_event->categories = $event->categories;
+                        $recurrence_event->className = $event->className . " recurrence_event";
+                        $recurrence_event->color = $event->color;
+                        $recurrence_event->url = $event->url . ((parse_url($event->url, PHP_URL_QUERY) == NULL) ? '?' : '&') . 'instance=' . $recurrence_date;
+                        $events[] = $recurrence_event;
+                    }
                 }
             }
             wp_reset_postdata();
