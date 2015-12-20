@@ -67,7 +67,10 @@
                         $recurrence_event->title = $event->title;
                         $recurrence_event->allDay = $event->allDay;
                         $recurrence_event->start = date_i18n('c', strtotime($recurrence_date));
-                        $recurrence_event->end = date_i18n('c', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                        if ($days_diff > 0)
+                            $recurrence_event->end = date_i18n('c', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                        else
+                            $recurrence_event->end = $recurrence_event->start;
                         $recurrence_event->categories = $event->categories;
                         $recurrence_event->className = $event->className . " recurrence_event";
                         $recurrence_event->color = $event->color;
