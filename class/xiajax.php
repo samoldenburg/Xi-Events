@@ -57,14 +57,12 @@
                     }
                     else {
                         $event->className = 'uncategorized';
-                        // TODO: color?
                     }
                     $events[] = $event;
 
                     $date1 = new DateTime($xi_event_meta['xi_event_start_query_friendly']);
                     $date2 = new DateTime($xi_event_meta['xi_event_end_query_friendly']);
                     $days_diff = $date2->diff($date1)->format("%a");
-
 
                     // List out the recurrence dates if they exist
                     $recurrence_dates = get_post_meta($xi_event_id, 'xi_recurrence_date', false);
@@ -74,7 +72,7 @@
                         $recurrence_event->title = $event->title;
                         $recurrence_event->allDay = $event->allDay;
                         $recurrence_event->start = date_i18n('c', strtotime($recurrence_date));
-                        if ($days_diff > 0)
+                        if ($days_diff > 0) // dates can get buggy with strtotime("+0 days") for some reason.
                             $recurrence_event->end = date_i18n('c', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
                         else
                             $recurrence_event->end = $recurrence_event->start;

@@ -21,12 +21,12 @@
          * @filter xi_events_time_format
          *     used to override the plugin's default time format.
          */
-        public static function render_event_time($event_id, $event_meta) {
+        public static function render_event_time($event_id, $event_meta, $start_timestamp = '', $end_timestamp = '') {
             $same_day_event = $event_meta['xi_event_start_raw'] == $event_meta['xi_event_end_raw'];
             $all_day_event = boolval($event_meta['xi_event_all_day']);
 
-            $start_timestamp = strtotime($event_meta['xi_event_start_raw']);
-            $end_timestamp = strtotime($event_meta['xi_event_end_raw']);
+            $start_timestamp = !empty($start_timestamp) ? $start_timestamp : strtotime($event_meta['xi_event_start_raw']);
+            $end_timestamp = !empty($end_timestamp) ? $end_timestamp : strtotime($event_meta['xi_event_end_raw']);
 
             $date_format = apply_filters('xi_events_date_format', 'm/d/Y');
             $time_format = apply_filters('xi_events_time_format', 'g:i:s a');
@@ -44,8 +44,12 @@
                 }
             } else {
                 if ($all_day_event) {
-                    $string = date_i18n($date_format, $start_timestamp) . " - "
-                            . date_i18n($date_format, $end_timestamp);
+                    $start = date_i18n($date_format, $start_timestamp);
+                    $end = date_i18n($date_format, $end_timestamp);
+                    if ($start != $end)
+                        $string = $start . " - " . $end;
+                    else
+                        $string = $start;
                     return $string;
                 } else {
                     $string = date_i18n($date_format . ", " . $time_format, $start_timestamp) . " - "

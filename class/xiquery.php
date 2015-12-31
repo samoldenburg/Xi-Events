@@ -168,7 +168,10 @@
                         $recurrence_event->ID = $event->ID;
                         $recurrence_event->title = $event->title;
                         $recurrence_event->start_timestamp = date_i18n('U', strtotime($recurrence_date));
-                        $recurrence_event->end_timestamp = date_i18n('U', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                        if ($days_diff > 1) // dates can get buggy with strtotime("+0 days") for some reason.
+                            $recurrence_event->end_timestamp = date_i18n('U', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                        else
+                            $recurrence_event->end_timestamp = $recurrence_event->start_timestamp;
                         $recurrence_event->date = date_i18n($date_format, $recurrence_event->start_timestamp);
                         $recurrence_event->permalink = $event->permalink . ((parse_url($event->permalink, PHP_URL_QUERY) == NULL) ? '?' : '&') . 'instance=' . $recurrence_date;
                         $events[] = $recurrence_event;
@@ -182,10 +185,34 @@
             return $events;
         }
 
-        public static function filter_events($events, $limit) {
+        public static function filter_events($events, $limit, $time = '', $start_key = 0) {
             // First, lets sort them, this function is located in XI__PLUGIN_DIR/lib/functions.php
             usort($events, 'xi_date_cmp_sort');
-            // Then just return a slice of the events based on the limit.
-            return array_slice($events, 0, $limit);
+
+            if ($start_key == 0) {
+                if (empty($time))
+                    $time = strtotime(date('m/d/Y'));
+                else
+                    $time = strtotime($time);
+
+
+                // Then just return a slice of the events based on the limit.
+                // get the start for the slice..
+                foreach ($events as $key => $event) {
+                    if (strtotime(date('m/d/Y', $event->end_timestamp)) > $time)
+                        break;
+                    $start_key = $key;
+                }
+
+                // this almost works, but start_key will be the end of the array regardless if the last event is past the
+                // start time...
+                if ($start_key == (sizeof($events) - 1) && end($events)->end_timestamp < $time)
+                    $start_key++;
+
+                return array_slice($events, $start_key, $limit);
+            }
+            else {
+                return array_slice($events, $start_key, $limit);
+            }
         }
     }
