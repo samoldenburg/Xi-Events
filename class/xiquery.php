@@ -113,6 +113,12 @@
                         'type'      => 'DATE'
                     ),
                     array(
+                        'key'       => 'xi_event_end_query_friendly',
+                        'value'     => date('Y-m-d'),
+                        'compare'   => '>=',
+                        'type'      => 'DATE'
+                    ),
+                    array(
                         'key'       => 'xi_recurrence_date',
                         'value'     => date('Y-m-d'),
                         'compare'   => '>=',
@@ -138,6 +144,11 @@
 
             $query = new WP_Query($args);
             $events = array();
+
+            $date1 = null;
+            $date2 = null;
+            $days_diff = null;
+
             if ($query->have_posts()) {
                 while ($query->have_posts()) {
                     $query->the_post();
@@ -148,7 +159,7 @@
                     $event->title = get_the_title();
 
                     $start_timestamp = strtotime(get_post_meta($event->ID, 'xi_event_start_raw', true));
-                    $start_timestamp = strtotime(get_post_meta($event->ID, 'xi_event_end_raw', true));
+                    $end_timestamp = strtotime(get_post_meta($event->ID, 'xi_event_end_raw', true));
                     $date_format = apply_filters('xi_events_date_format', 'm/d/Y');
                     $event->date = date_i18n($date_format, $start_timestamp);
                     $event->start_timestamp = $start_timestamp;
@@ -160,27 +171,27 @@
                     $date2 = new DateTime(get_post_meta($event->ID, 'xi_event_end_query_friendly', true));
                     $days_diff = $date2->diff($date1)->format("%a");
 
-
                     // List out the recurrence dates if they exist
                     $recurrence_dates = get_post_meta($event->ID, 'xi_recurrence_date', false);
                     foreach ($recurrence_dates as $recurrence_date) {
                         $recurrence_event = new stdClass();
                         $recurrence_event->ID = $event->ID;
                         $recurrence_event->title = $event->title;
-                        $recurrence_event->start_timestamp = date_i18n('U', strtotime($recurrence_date));
+                        $recurrence_event->start_timestamp = strtotime($recurrence_date);
                         if ($days_diff > 1) // dates can get buggy with strtotime("+0 days") for some reason.
-                            $recurrence_event->end_timestamp = date_i18n('U', strtotime('+{$days_diff} days', strtotime($recurrence_date)));
+                            $recurrence_event->end_timestamp = strtotime('+{$days_diff} days', strtotime($recurrence_date));
                         else
                             $recurrence_event->end_timestamp = $recurrence_event->start_timestamp;
                         $recurrence_event->date = date_i18n($date_format, $recurrence_event->start_timestamp);
                         $recurrence_event->permalink = $event->permalink . ((parse_url($event->permalink, PHP_URL_QUERY) == NULL) ? '?' : '&') . 'instance=' . $recurrence_date;
                         $events[] = $recurrence_event;
                     }
-
-                    // The events can be out of order and contain more events than desired now, so we need to filter down
-                    $events = XiQuery::filter_events($events, $limit);
                 }
             }
+
+            // The events can be out of order and contain more events than desired now, so we need to filter down
+            $events = XiQuery::filter_events($events, $limit);
+
             wp_reset_postdata();
             return $events;
         }
@@ -199,9 +210,9 @@
                 // Then just return a slice of the events based on the limit.
                 // get the start for the slice..
                 foreach ($events as $key => $event) {
-                    if (strtotime(date('m/d/Y', $event->end_timestamp)) > $time)
-                        break;
                     $start_key = $key;
+                    if (strtotime(date('m/d/Y', $event->end_timestamp)) >= $time)
+                        break;
                 }
 
                 // this almost works, but start_key will be the end of the array regardless if the last event is past the
